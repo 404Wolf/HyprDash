@@ -39,7 +39,7 @@ const args = parser.parse_args();
     }
   }
   else {
-    await launchTaggedClient(args.launchCommand, tag, ["pin", "size 65% 60%", "float"])
+    await launchTaggedClient(args.launchCommand, tag, ["pin", "size 65% 60%", "float", "focus"])
   }
 })()
 
