@@ -30,6 +30,7 @@ const args = parser.parse_args();
   if (ephemeralApp) {
     if (ephemeralApp.workspace.name === workspace) {
       await hyprctlDispatch(`pin pid:${ephemeralApp.pid}`)
+      await hyprctlDispatch(`focuswindow pid:${ephemeralApp.pid}`)
       await hyprctlDispatch(`movetoworkspacesilent +0,pid:${ephemeralApp.pid}`)
     }
     else {
