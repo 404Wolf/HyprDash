@@ -21,7 +21,7 @@
       rec {
         packages = rec {
           executable = pkgs.writeShellScriptBin "hyprland-dash-to-dock" ''
-            ${nodejs}/bin/node ${default}/bin/hyprland-dask-to-dock.js
+            ${nodejs}/bin/node ${default}/bin/hyprland-dask-to-dock.js $@
           '';
           default = pkgs.buildNpmPackage {
             name = "hyprland-dask-to-dock";
