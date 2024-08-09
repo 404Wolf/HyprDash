@@ -30,34 +30,40 @@ async function getClientTags() {
   return clientTags;
 }
 
+async function waitUntilTagged(pid: number, tag: string) {
+  console.log(`Waiting for tag ${tag} on pid ${pid}`);
+  let clients = await getClientTags();
+  while (!clients.includes(tag)) {
+    clients = await getClientTags();
+    await runCommand(`hyprctl dispatch tagwindow +${tag} pid:${pid}`);
+  }
+}
+
 export async function launchTaggedClient(
   launchCommand: string,
   tag: string,
   rules: string[] = [],
   matcher = /\w/,
 ) {
-  const creationWorkspaceId = uuid().toString();
-  rules.push(`workspace special:${creationWorkspaceId}`);
   const stringifiedRules = rules.join(";");
   await runCommand(
     `hyprctl "dispatch exec [${stringifiedRules}] ${launchCommand}"`,
   );
+  const pidGetterOutput = (
+    await runCommand("ps aux --sort +start_time | tail -n 4")
+  ).split("\n")[0];
 
-  let tries = 0;
-  while (true) {
-    if (tries > 10) {
-      throw new Error("Could not find the client after 10 tries");
-    }
-    tries++;
-    const clients = await getClients();
-    if (
-      clients.find((client: Client) =>
-        client.workspace.name.includes(creationWorkspaceId),
-      )
-    ) {
-      hyprctlDispatch(`tagwindow ${tag}`);
-    }
-  }
+  // Raise error if matcher is not found
+  if (!matcher.test(pidGetterOutput))
+    throw new Error("No PID found for the application.");
+
+  const pids = pidGetterOutput.match(/\d+/g);
+  if (!pids) throw new Error("No PID found for the application.");
+  const pid = pids[0];
+
+  await waitUntilTagged(parseInt(pid), tag);
+
+  return pid;
 }
 
 export async function getClientByTag(tag: string): Promise<Client | false> {
