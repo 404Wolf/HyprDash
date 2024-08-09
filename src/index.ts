@@ -51,6 +51,7 @@ args.matcher = new RegExp(args.matcher);
       await hyprctlDispatch(
         `movetoworkspacesilent ${activeWorkspaceID},pid:${ephemeralApp.pid}`,
       );
+      await hyprctlDispatch(`focuswindow pid:${ephemeralApp.pid}`);
     } else {
       await hyprctlDispatch(`pin pid:${ephemeralApp.pid}`);
       await hyprctlDispatch(
