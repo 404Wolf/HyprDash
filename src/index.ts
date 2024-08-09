@@ -47,11 +47,13 @@ args.matcher = new RegExp(args.matcher);
   if (ephemeralApp) {
     if (ephemeralApp.workspace.name === workspace) {
       const activeWorkspaceID = (await activeWorkspace()).id;
-      await hyprctlDispatch(`pin pid:${ephemeralApp.pid}`);
+      // await hyprctlDispatch(`pin pid:${ephemeralApp.pid}`);
       await hyprctlDispatch(
         `movetoworkspacesilent ${activeWorkspaceID},pid:${ephemeralApp.pid}`,
       );
       await hyprctlDispatch(`focuswindow pid:${ephemeralApp.pid}`);
+      await hyprctlDispatch(`workspace +1`);
+      await hyprctlDispatch(`workspace -1`);
     } else {
       await hyprctlDispatch(`pin pid:${ephemeralApp.pid}`);
       await hyprctlDispatch(
